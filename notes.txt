@@ -1,0 +1,12 @@
+go mod init example/zach/testgolang
+
+..write some code
+
+..import library in code
+go get k8s.io/client-go@v0.20.4
+go mod tidy     // this command goes through the go.mod file to resolve dependencies
+
+..write more code
+
+go build
+go run kubeWatch.go

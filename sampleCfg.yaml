@@ -1,0 +1,8 @@
+- name: zach
+  favs:
+    food: [burger, fries]
+    number: 42
+- name: jenn
+  favs:
+    number: 12
+    
