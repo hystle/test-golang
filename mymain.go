@@ -6,7 +6,8 @@ import (
 	// "github.com/google/go-cmp/cmp"
 	// "example/zach/testgolang/myyaml"
 	// "example/zach/testgolang/mykube"
-	"example/zach/testgolang/mygoroutine"
+	// "example/zach/testgolang/mygoroutine"
+	"example/zach/testgolang/mygit"
 )
 
 func main() {
@@ -23,10 +24,11 @@ func main() {
 	// if ok := kube.Connect(); !ok {
 	// 	return
 	// }
-	// testKubePkg.GetPods(&kube)
-	// testKubePkg.StartKubeResWatch(&kube, "cert-manager", "", "configmap")
-	// wait on kube watch
-	// select {}
+
+	// testKubePkg.GetPods(&kube)	// get pods every 10 seconds
+
+	// testKubePkg.StartKubeResWatch(&kube, "kube-system", "storage-provisioner", "pod")	// watch res
+	// select {} 	// wait on kube watch
 
 	// fmt.Println("----")
 
@@ -42,7 +44,19 @@ func main() {
 	// testGoroutinePkg.FibWithChan(c, quit)
 
 	// fmt.Println("----")
-	
-	fmt.Println(testGoroutinePkg.Same(testGoroutinePkg.New(3),testGoroutinePkg.New(3)))
-	fmt.Println(testGoroutinePkg.Same(testGoroutinePkg.New(3),testGoroutinePkg.New(5)))
+
+	// fmt.Println(testGoroutinePkg.Same(testGoroutinePkg.New(3),testGoroutinePkg.New(3)))
+	// fmt.Println(testGoroutinePkg.Same(testGoroutinePkg.New(3),testGoroutinePkg.New(5)))
+
+	fmt.Println("----")
+	// r, _ := testGit.GitCloneRepo("/Users/ziczhou/Desktop/test", "https://github.com/go-git/go-git.git")
+	// testGit.GitCheckoutBranch(r, "master")
+	// testGit.GitCheckoutBranch(r, "wasm")
+	// testGit.GitGetRemoteUrl(r, "/Users/ziczhou/Desktop/test")
+
+	r, _ := testGit.GitOpenRepo("/Users/ziczhou/Desktop/test")
+	err := testGit.GitPullRepo(r)
+	if err == nil {
+		fmt.Println("ok")
+	}
 }
