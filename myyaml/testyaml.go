@@ -7,13 +7,14 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// NOTE1: struct fields must be public (Capitalized) otherwise it'll return empty
-// 		  field tag is not must-have and could have options
+// NOTE1: 
+// - struct fields must be public (Capitalized) otherwise it'll return empty
+// - field tag is not must-have and could have options
 type Person struct {
-	Name string `yaml:"name"`
+	Name string 		`yaml:"name"`
 	Favs struct {
-		Food []string `yaml:"food,omitempty"`
-		Number  int `yaml:"number"`
+		Food []string 	`yaml:"food,omitempty"`
+		Number  int 	`yaml:"number"`
 	}
 }
 

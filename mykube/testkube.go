@@ -7,7 +7,8 @@ import (
 	"path/filepath"
 	"time"
 
-	corev1 "k8s.io/api/core/v1"
+
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/fields"
@@ -53,6 +54,9 @@ func StartKubeResWatch(kube *Kube, ns string, resName string, resType string) *K
 	if resType == "configmap" {
 		listOptions := metav1.ListOptions{FieldSelector: selector, Watch: true, TimeoutSeconds: &timeout}
 		watch, err = kube.client.CoreV1().ConfigMaps(ns).Watch(context.TODO(), listOptions)
+	} else if resType == "pod" {
+		listOptions := metav1.ListOptions{FieldSelector: selector, Watch: true, TimeoutSeconds: &timeout}
+		watch, err = kube.client.CoreV1().Pods(ns).Watch(context.TODO(), listOptions)
 	} else {
 		fmt.Printf("Resource type %s not supported yet", resType)
 		return nil
@@ -80,16 +84,29 @@ ExitRoutine:
 				fmt.Printf("Watch Chan for %s closed", watchCtx.resName)
 				break ExitRoutine
 			}
+			fmt.Println("Event: ", event.Type)
+			switch event.Object.(type) {
+			case *v1.Secret:
+				p, ok := event.Object.(*v1.Secret)
+				if ok {
+					fmt.Println("Secret Name = ", string(p.Name))
+				}
+			case *v1.Pod:
+				p, ok := event.Object.(*v1.Pod)
+				if ok {
+					fmt.Println("Pod Name = ", string(p.Name))
+				}
+			case *v1.ConfigMap:
+				p, ok := event.Object.(*v1.ConfigMap)
+				if ok {
+					fmt.Println("ConfigMap Name = ", string(p.Name))
+				}
+				fmt.Printf("ConfigMap: %s - %s\n", p.Name, p.Namespace)
+				for k, v := range p.Data {
+					fmt.Printf("Key: %s => Value: %s\n", k, v)
+				}
+			}
 
-			// type assertion test
-			obj, ok := event.Object.(*corev1.ConfigMap)
-			if !ok {
-				fmt.Println("Bad type - not a core v1 ConfigMap")
-			}
-			fmt.Printf("ConfigMap: %s - %s\n", obj.Name, obj.Namespace)
-			for k, v := range obj.Data {
-				fmt.Printf("Key: %s => Value: %s\n", k, v)
-			}
 		case <-watchCtx.stopChan:
 			fmt.Println("Got terminate signal")
 			break ExitRoutine
